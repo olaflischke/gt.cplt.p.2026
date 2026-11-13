@@ -1,34 +1,42 @@
-"""Vorher: absichtlich mit Code-Smells versehene Rabattberechnung.
+_SAVE10_CODE = "SAVE10"
+_VIP20_CODE = "VIP20"
+_VIP_CUSTOMER_PREFIX = "VIP-"
+_SAVE10_DISCOUNT_PERCENT = 10
+_VIP20_DISCOUNT_PERCENT = 20
+_PERCENT_BASE = 100
+_SURCHARGE_THRESHOLD = 5000
+_SURCHARGE_AMOUNT = 499
 
-Diese Datei dient als Ausgangspunkt fuer die Refactoring-Demo in Block 4.
-Nicht als Vorbild fuer produktiven Code verwenden.
-"""
+
+def _calculate_subtotal(items):
+    total = 0
+    for item in items:
+        if item["qty"] > 0 and item["price"] >= 0:
+            total = total + item["qty"] * item["price"]
+
+    return total
+
+
+def _apply_discount(total, order):
+    if order.get("code") is not None:
+        if order["code"] == _SAVE10_CODE:
+            total = total - (total * _SAVE10_DISCOUNT_PERCENT / _PERCENT_BASE)
+        elif order["code"] == _VIP20_CODE and order.get("customer", "").startswith(_VIP_CUSTOMER_PREFIX):
+            total = total - (total * _VIP20_DISCOUNT_PERCENT / _PERCENT_BASE)
+
+    return total
+
+
+def _apply_surcharge(total):
+    if total < _SURCHARGE_THRESHOLD:
+        total = total + _SURCHARGE_AMOUNT
+
+    return total
 
 
 def calc(o):
-    # lange Funktion, tiefe Verschachtelung, Magic Numbers, unklare Namen
-    t = 0
-    for i in o["items"]:
-        if i["qty"] > 0:
-            if i["price"] >= 0:
-                t = t + i["qty"] * i["price"]
-            else:
-                t = t + 0
-        else:
-            t = t + 0
-    if o.get("code") is not None:
-        if o["code"] == "SAVE10":
-            t = t - (t * 10 / 100)
-        else:
-            if o["code"] == "VIP20":
-                if o.get("customer", "").startswith("VIP-"):
-                    t = t - (t * 20 / 100)
-                else:
-                    pass
-            else:
-                pass
-    if t < 5000:
-        t = t + 499
-    else:
-        t = t + 0
-    return t
+    total = _calculate_subtotal(o["items"])
+    total = _apply_discount(total, o)
+    total = _apply_surcharge(total)
+
+    return total

@@ -34,6 +34,10 @@ class PricingBeforeCharacterizationTests(unittest.TestCase):
                 self.assertEqual(499, result)
                 self.assertIs(type(result), int)
 
+    def test_nonpositive_quantity_does_not_require_price(self):
+        order = {"items": [{"qty": 0}], "code": None}
+        self.assertEqual(499, calc(order))
+
     def test_zero_price_item_adds_nothing(self):
         order = {"items": [{"qty": 3, "price": 0}], "code": None}
         result = calc(order)
