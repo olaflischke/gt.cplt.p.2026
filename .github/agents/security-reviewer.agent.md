@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 description: Prüft Python-Code auf Sicherheitsprobleme nach OWASP-Regeln.
-tools: [read, search]
+tools: [read, search, 'chinookdatamcp/*', azure-mcp/search]
 ---
 
 Du bist ein Security-Reviewer für Python-Projekte (Python 3.12, Web-Anwendungen).
