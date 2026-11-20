@@ -1,0 +1,3 @@
+pydantic==2.14.4
+requests<3,>=2.25
+packaging>=21.0
